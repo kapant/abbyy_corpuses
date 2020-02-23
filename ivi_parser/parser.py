@@ -4,37 +4,48 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 import pandas as pd
 
-data = pd.DataFrame(columns=["rating", "text"])
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options)
 
-driver = webdriver.Firefox()
-
-num = 132293
+num = 96602
 
 try:
     while True:
         num += 1
-
+        
+        # getting reviews page
         driver.get(f"https://www.ivi.ru/watch/{num}/reviews")
-
+        
+        # check if it exist
         if "страница не найдена" in driver.title.lower():
-            print(".", end="")
+            print(".")
             continue
         else:
             print(num)
+            data = pd.DataFrame(columns=["rating", "title", "text"])
+            
+            title = driver.title.replace("Рецензии на фильм ", "")
+            title = title.replace("Рецензии на мультфильм ", "")
+            
+            # show all reviews
             while True:
                 try:
                     elem = driver.find_element_by_class_name("movie-extras__nbl-button_show-more")
                     elem.click()
                 except NoSuchElementException:
                     break
-
+            
+            # show whole entry of each review
             elems = driver.find_elements_by_class_name("clause__toggle")
             for elem in elems:
                 elem.click()
 
+            # extracting text and rating
             reviews = driver.find_elements_by_class_name("movie-extras__item")
             for review in reviews:
                 try:
@@ -47,9 +58,10 @@ try:
                 except NoSuchElementException:
                     continue
 
-                data = data.append([{"rating": rating, "text": text}], ignore_index=True)
+                data = data.append([{"rating": rating, "title": title, "text": text}], ignore_index=True)
 
-            data.to_csv(f"./reviews/movie_{num}.csv", encoding="utf-8", index=False)
+            if len(data["rating"]) > 0:
+                data.to_csv(f"./reviews/movie_{num}.csv", encoding="utf-8", index=False)
 
     driver.close()
 except KeyboardInterrupt:
