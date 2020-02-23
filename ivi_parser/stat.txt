@@ -1,3 +1,3 @@
-num of reviews: 219
-num of films: 102
-num of words: 82365
+num of reviews: 240
+num of films: 118
+num of words: 89492
