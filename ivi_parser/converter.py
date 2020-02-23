@@ -40,6 +40,7 @@ with open("./stat.txt", "w") as f:
     f.write("num of reviews: " + str(stat["reviews"]) + "\n")
     f.write("num of films: " + str(stat["films"]) + "\n")
     f.write("num of words: " + str(stat["words"]) + "\n")
+    f.write("vocab size: " + str(len(vocab)) + "\n")
     f.close()
 
 with open("./vocab.txt", "w") as f:
