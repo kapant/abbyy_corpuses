@@ -1,4 +1,4 @@
-num of reviews: 240
-num of films: 118
-num of words: 89492
-vocab size: 19052
+num of reviews: 602
+num of films: 294
+num of words: 244046
+vocab size: 37196

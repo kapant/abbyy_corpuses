@@ -1,3 +1,5 @@
+# before start: export PATH=$PATH:/data/kapant/geckodriver
+
 import sys
 import os
 
@@ -12,7 +14,7 @@ options = Options()
 options.headless = True
 driver = webdriver.Firefox(options=options)
 
-num = 96602
+num = 100500
 
 try:
     while True:
@@ -23,10 +25,10 @@ try:
         
         # check if it exist
         if "страница не найдена" in driver.title.lower():
-            print(".")
+            print(str(num) + " not found")
             continue
         else:
-            print(num)
+            print(str(num) + " exists")
             data = pd.DataFrame(columns=["rating", "title", "text"])
             
             title = driver.title.replace("Рецензии на фильм ", "")
@@ -65,6 +67,18 @@ try:
 
     driver.close()
 except KeyboardInterrupt:
+    with open("./last_number.txt", "w") as f:
+        f.write(str(num))
+        f.close()
+    print(f"\nLast number: {num}\n")
+    driver.close()
+    
+    try:
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
+except Exception as e:
+    print(e)
     with open("./last_number.txt", "w") as f:
         f.write(str(num))
         f.close()
