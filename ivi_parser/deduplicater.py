@@ -26,9 +26,6 @@ def to_minhash(words: List[str]) -> MinHash:
 
 
 def main():
-    """Точка входа в приложение."""
-    corpus_root = Path('Corpus')
-
     print('Загружаем корпус')
     all_csv = pd.read_csv("./all.csv", encoding="utf-8")
     raw_corpus = all_csv["text"]
