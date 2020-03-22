@@ -2,3 +2,4 @@
 *.log
 vocab.txt
 index
+*.tags
