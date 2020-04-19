@@ -3,3 +3,6 @@
 vocab.txt
 index
 *.tags
+
+!filtered_menzerath.csv
+!menzerath.csv
