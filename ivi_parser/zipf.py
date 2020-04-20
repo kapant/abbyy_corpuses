@@ -1,6 +1,5 @@
 import math
 import nltk
-import pyphen
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -12,7 +11,6 @@ from matplotlib.axes import Axes
 from typing import List
 
 tokenizer = nltk.tokenize.WordPunctTokenizer()
-syllab = pyphen.Pyphen(lang="ru_RU")
 stop_words = set(stopwords.words('russian'))
 
 all_texts = pd.read_csv("./all.csv", encoding="utf-8")["text"]
@@ -32,12 +30,12 @@ for i, (w, f) in enumerate(filtered_freq.most_common(10)):
 # approximation
 y = [f for _, f in freq.most_common(100)]
 x = np.arange(len(y))
-A = np.vstack([x, np.ones(len(x))]).T
+A = np.vstack([np.log(x + 1, dtype="float"), np.ones(len(x))]).T
 m, c = np.linalg.lstsq(A, y, rcond=None)[0]
 
 yf = [f for _, f in filtered_freq.most_common(100)]
 xf = np.arange(len(yf))
-A = np.vstack([xf, np.ones(len(xf))]).T
+A = np.vstack([np.log(xf + 1, dtype="float"), np.ones(len(xf))]).T
 mf, cf = np.linalg.lstsq(A, yf, rcond=None)[0]
 
 print("Making plot")
@@ -46,10 +44,10 @@ ax: List[Axes] = fig.subplots(1, 2)
 
 ax[0].set(xlabel="Word rank", ylabel="Occurrences count", title="Without stop-words filtration")
 ax[0].plot(list(f for w, f in freq.most_common(100)), 'o')
-ax[0].plot(x, m * x + c, 'r')
+ax[0].plot(x, m * np.log(x + 1, dtype="float") + c, 'r')
 ax[1].set(xlabel="Word rank", title="After filtration")
 ax[1].plot(list(f for w, f in filtered_freq.most_common(100)), 'o')
-ax[1].plot(xf, mf * xf + cf, 'r')
+ax[1].plot(xf, mf * np.log(xf + 1, dtype="float") + cf, 'r')
 
 fig.savefig("./zipf.png")
 print("Plot in zipf.png")
