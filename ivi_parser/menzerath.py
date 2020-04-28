@@ -53,13 +53,27 @@ def syllabs_proc(syllabs, filtered=False):
 all_texts = pd.read_csv("./all.csv", encoding="utf-8")["text"]
 syllabs = []
 filtered_syllabs = []
+words = set([])
+filtered_words = set([])
 for text in tqdm(all_texts):
     for sent in nltk.sent_tokenize(text, language='russian'):
         for w in tokenizer.tokenize(sent):
-            arr = syllab_tok.inserted(w.lower(), hyphen="|").split("|")
-            syllabs.append(arr)
+            if w == "томсамомсайтепрокинопрокоторыйстолькописалиосенью":
+                print(text)
+            words.add(w)
             if w not in stop_words:
-                filtered_syllabs.append(arr)
+                filtered_words.add(w)
+
+for w in tqdm(words):
+    arr = syllab_tok.inserted(w.lower(), hyphen="|").split("|")
+    syllabs.append(arr)
+
+for w in tqdm(filtered_words):
+    arr = syllab_tok.inserted(w.lower(), hyphen="|").split("|")
+    if len(arr) > 15:
+        # longest word "томсамомсайтепрокинопрокоторыйстолькописалиосенью"
+        print(w)
+    filtered_syllabs.append(arr)
 
 syllabs_proc(syllabs)
 syllabs_proc(filtered_syllabs, True)
